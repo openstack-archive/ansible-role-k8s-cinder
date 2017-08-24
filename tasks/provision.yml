@@ -166,6 +166,7 @@
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
     namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
     restart_policy: OnFailure
     containers:
     - name: cinder-create-db
@@ -181,9 +182,10 @@
            name='cinder'"
       env:
         - name: DATABASE_PASSWORD
-          value: "mysqlpass"
+          value: "{{ database_password }}"
         - name: "TZ"
           value: "UTC"
+  register: result
 
 - name: Create Cinder User in the database
   k8s_v1_job:
@@ -192,6 +194,7 @@
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
     namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
     restart_policy: OnFailure
     containers:
     - name: cinder-create-db
@@ -211,29 +214,35 @@
            append_privs='yes'"
       env:
         - name: CINDER_DATABASE_PASSWORD
-          value: "cinderpass"
+          value: "{{ cinder_db_password }}"
         - name: DATABASE_PASSWORD
-          value: "mysqlpass"
+          value: "{{database_password}}"
         - name: "TZ"
           value: "UTC"
+  when: result|succeeded
 
 # Cinder Scheduler won't start without cinder tables present
 - name: Create Cinder Tables
   k8s_v1_job:
-    name: cinder-create-db
+    name: cinder-create-tables
     host: "{{coe_host}}"
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
     namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
     restart_policy: OnFailure
     containers:
     - name: cinder-create-db
       image: tripleoupstream/centos-binary-cinder-api:latest
       image_pull_policy: IfNotPresent
-      command: ["sh", "-c"]
-      args: 
-        - cinder-manage db sync
+#      command: ["/usr/bin/cinder-manage", "db", "sync"]
       env:
+        - name: KOLLA_KUBERNETES
+          value: ""
+        - name: KOLLA_BOOTSTRAP
+          value: ""
+        - name: KOLLA_CONFIG_STRATEGY
+          value: "COPY_ONCE"
         - name: "TZ"
           value: "UTC"
       volume_mounts:
@@ -242,11 +251,12 @@
     volumes:
       - name: kolla-config
         config_map:
-          name: cinder-scheduler
+          name: cinder-api
+  when: result|succeeded
 
 - name: create cinder-api service
   k8s_v1_service:
-    name: cinder-api
+    name: cinder
     host: "{{coe_host}}"
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
@@ -270,6 +280,7 @@
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
     namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
     labels:
       app: cinder-api
       service: cinder-api
@@ -278,9 +289,8 @@
       app: cinder-api
       service: cinder-api
     containers:
-    - env:
+    - name: cinder-api
       image: tripleoupstream/centos-binary-cinder-api:latest
-      name: cinder-api
       ports:
         - container_port: 8776
           protocol: TCP
@@ -307,6 +317,7 @@
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
     namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
     labels:
       app: cinder-scheduler
       service: cinder-scheduler
@@ -315,8 +326,8 @@
       app: cinder-scheduler
       service: cinder-scheduler
     containers:
-    - image: tripleoupstream/centos-binary-cinder-scheduler:latest
-      name: cinder-scheduler
+    - name: cinder-scheduler
+      image: tripleoupstream/centos-binary-cinder-scheduler:latest
       env:
         - name: TZ
           value: UTC
@@ -339,7 +350,7 @@
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
     namespace: "{{ namespace }}"
-    service_account_name: openstack
+    service_account_name: "{{ service_account }}"
     labels:
       app: cinder-volume
       service: cinder-volume

@@ -3,6 +3,9 @@ kube_context: "kubernetes-admin@kubernetes"
 config_file: "~/.kube/config"
 action: provision
 namespace: openstack
+service_account: openstack
+database_password: weakpassword
+cinder_db_password: cinderpass
 
 hiera_data: {}
 hiera_data_file: ''

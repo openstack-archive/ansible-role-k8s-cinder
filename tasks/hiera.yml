@@ -5,84 +5,12 @@
     hieradata: '{{hiera_data}}'
     hieradata_file: '{{hiera_data_file}}'
     schema:
-      glance_log_file: DEFAULT.log_file
-      glance::api::debug: DEFAULT.debug
-      glance::api::workers: DEFAULT.workers
-      cinder::api::bind_port: 0.0.0.0
       cinder::api::bind_port: DEFAULT.bind_port
-      glance::api::enable_v1_api: DEFAULT.enable_v1_api
-      glance::api::enable_v2_api: DEFAULT.enable_v2_api
-      glance::api::show_image_direct_url: DEFAULT.show_image_direct_url
-      glance::api::show_multiple_locations: DEFAULT.show_multiple_locations
-
-      glance::api::authtoken::auth_uri: keystone_authtoken.auth_uri
-      glance::api::authtoken::auth_url: keystone_authtoken.auth_url
-      glance::api::authtoken::password: keystone_authtoken.password
-      glance::api::authtoken::username: keystone_authtoken.username
-      glance::api::authtoken::project: keystone_authtoken.project
-      glance::api::os_region_name: glance_store.os_region_name
-
-      glance::api::enable_proxy_headers_parsing: oslo_middleware.enable_proxy_headers_parsing
-
-      glance::api::pipeline: paste_deploy.pipeline
       cinder::notify::rabbitmq::rabbit_userid: oslo_messaging_rabbit.rabbit_userid
       cinder::notify::rabbitmq::rabbit_port: oslo_messaging_rabbit.rabbit_port
       cinder::notify::rabbitmq::rabbit_password: oslo_messaging_rabbit.rabbit_password
       cinder::notify::rabbitmq::rabbit_use_ssl: oslo_messaging_rabbit.rabbit_use_ssl
       cinder::notify::rabbitmq::rabbit_host: oslo_messaging_rabbit.rabbit_host
-      cinder::notify::rabbitmq::notification_driver: {get_param: NotificationDriver}
-      glance::notification_driver: oslo_messaging_notifications.driver
-      glance::notification_topics: oslo_messaging_notifications.topics
-
-
-
-    cinder::api::bind_host": "%{hiera('fqdn_internal_api')}",
-    cinder::api::enable_proxy_headers_parsing": true,
-    cinder::api::nova_catalog_admin_info": "compute:nova:adminURL",
-    cinder::api::nova_catalog_info": "compute:nova:internalURL",
-    cinder::api::service_name": "httpd",
-    "cinder::ceilometer::notification_driver": "messagingv2",
-    "cinder::config": {
-        "DEFAULT/swift_catalog_info": {
-            "value": "object-store:swift:internalURL"
-        }
-    },
-    "cinder::cron::db_purge::age": "0",
-    "cinder::cron::db_purge::destination": "/var/log/cinder/cinder-rowsflush.log",
-    "cinder::cron::db_purge::hour": "0",
-    "cinder::cron::db_purge::minute": "1",
-    "cinder::cron::db_purge::month": "*",
-    "cinder::cron::db_purge::monthday": "*",
-    "cinder::cron::db_purge::user": "keystone",
-    "cinder::cron::db_purge::weekday": "*",
-    "cinder::database_connection": "mysql+pymysql://cinder:wafF9ny97Z4ANQMegheBbdxDc@192.168.122.120/cinder?read_default_group=tripleo&read_default_file=/etc/my.cnf.d/tripleo.cnf",
-    "cinder::db::database_db_max_retries": -1,
-    "cinder::db::database_max_retries": -1,
-    "cinder::db::mysql::allowed_hosts": [
-        "%",
-        "%{hiera('mysql_bind_host')}"
-    ],
-    "cinder::db::mysql::dbname": "cinder",
-    "cinder::db::mysql::host": "192.168.122.120",
-    "cinder::db::mysql::password": "wafF9ny97Z4ANQMegheBbdxDc",
-    "cinder::db::mysql::user": "cinder",
-    "cinder::debug": "",
-    "cinder::glance::glance_api_servers": "http://192.168.122.120:9292",
-    "cinder::keystone::authtoken::auth_uri": "http://192.168.122.120:5000",
-    "cinder::keystone::authtoken::auth_url": "http://192.168.122.120:5000",
-    "cinder::keystone::authtoken::password": "wafF9ny97Z4ANQMegheBbdxDc",
-    "cinder::keystone::authtoken::project_domain_name": "Default",
-    "cinder::keystone::authtoken::project_name": "service",
-    "cinder::keystone::authtoken::user_domain_name": "Default",
-    "cinder::policy::policies": {},
-    "cinder::rabbit_heartbeat_timeout_threshold": 60,
-    "cinder::rabbit_password": "3H8Zm93p6Z6qghxPMJ7yBsDtc",
-    "cinder::rabbit_port": 5672,
-    "cinder::rabbit_use_ssl": "False",
-    "cinder::rabbit_userid": "guest",
-    "cinder::scheduler::scheduler_driver": "cinder.scheduler.filter_scheduler.FilterScheduler",
-    "cinder::wsgi::apache::bind_host": "192.168.122.120",
-    "cinder::wsgi::apache::servername": "%{hiera('fqdn_internal_api')}",
-    "cinder::wsgi::apache::ssl": false,
-    "cinder::wsgi::apache::workers": "%{::os_workers}",
-
+      cinder::rabbit_userid: cinder_rabbit_user
+      cinder::rabbit_password: cinder_rabbit_password
+      cinder::rabbit_port: cinder_rabbit_port
