@@ -5,12 +5,17 @@
     hieradata: '{{hiera_data}}'
     hieradata_file: '{{hiera_data_file}}'
     schema:
-      cinder::api::bind_port: DEFAULT.bind_port
-      cinder::notify::rabbitmq::rabbit_userid: oslo_messaging_rabbit.rabbit_userid
-      cinder::notify::rabbitmq::rabbit_port: oslo_messaging_rabbit.rabbit_port
-      cinder::notify::rabbitmq::rabbit_password: oslo_messaging_rabbit.rabbit_password
-      cinder::notify::rabbitmq::rabbit_use_ssl: oslo_messaging_rabbit.rabbit_use_ssl
-      cinder::notify::rabbitmq::rabbit_host: oslo_messaging_rabbit.rabbit_host
-      cinder::rabbit_userid: cinder_rabbit_user
-      cinder::rabbit_password: cinder_rabbit_password
-      cinder::rabbit_port: cinder_rabbit_port
+      cinder::api::bind_port: bind_port
+      cinder::rabbit_userid: oslo_messaging_rabbit.rabbit_userid
+      cinder::rabbit_port: oslo_messaging_rabbit.rabbit_port
+      cinder::rabbit_password: oslo_messaging_rabbit.rabbit_password
+      cinder::rabbit_use_ssl: oslo_messaging_rabbit.rabbit_use_ssl
+      cinder::rabbit_host: oslo_messaging_rabbit.rabbit_host
+      cinder::rabbit_heartbeat_timeout_threshold: oslo_messaging_rabbit.rabbit_heartbeat_timeout_threshold
+      cinder::glance::glance_api_servers: glance_api_servers
+      cinder::glance::glance_api_version: glance_api_version
+      cinder::database_connection: database.connection
+      cinder::db::database_max_retries: database.max_retries
+      cinder::db::database_db_max_retries: database.db_max_retries
+    default: '{{cinder_config}}'
+    fact_variable: 'cinder_config'

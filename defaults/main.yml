@@ -10,7 +10,7 @@ cinder_db_password: cinderpass
 hiera_data: {}
 hiera_data_file: ''
 
-cinder_conf:
+cinder_config:
   DEFAULT:
     public_bind_host: "0.0.0.0"
   database:
