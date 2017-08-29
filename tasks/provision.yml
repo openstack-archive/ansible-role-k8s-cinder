@@ -8,14 +8,14 @@
     - cinder.conf
     - cinder-wsgi.conf
 
-#- include: hiera.yml
+- include: hiera.yml
 
-#- name: Generate config files
-#  config_template:
-#    src: base.conf.j2
-#    dest: /tmp/glance-api.conf
-#    config_overrides: '{{glance_config}}'
-#    config_type: ini
+- name: Generate config files
+  config_template:
+    src: cinder.conf.j2
+    dest: /tmp/cinder.conf
+    config_overrides: '{{cinder_config}}'
+    config_type: ini
 
 - name: Read configs into memory
   slurp:
@@ -27,10 +27,10 @@
     src: "/tmp/cinder-wsgi.conf"
   register: "cinder_wsgi_conf"
 
-- name: Create cinder-api configmaps
+- name: Create cinder configmaps
   ignore_errors: yes
   k8s_v1_config_map:
-    name: cinder-api
+    name: cinder
     host: "{{coe_host}}"
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
@@ -251,7 +251,7 @@
     volumes:
       - name: kolla-config
         config_map:
-          name: cinder-api
+          name: cinder
   when: result|succeeded
 
 - name: create cinder-api service
@@ -307,7 +307,7 @@
     volumes:
       - name: kolla-config
         config_map:
-          name: cinder-api
+          name: cinder
 
 # Cinder Scheduler
 - name: create cinder-scheduler deployment
@@ -341,7 +341,7 @@
     volumes:
       - name: kolla-config
         config_map:
-          name: cinder-scheduler
+          name: cinder
 
 - name: Create Cinder Volume Deployment
   k8s_v1beta1_deployment:
@@ -375,4 +375,4 @@
     volumes:
       - name: kolla-config
         config_map:
-          name: cinder-volume
+          name: cinder
