@@ -5,7 +5,6 @@
     backup: yes
     mode: 0644
   with_items:
-    - cinder.conf
     - cinder-wsgi.conf
 
 - include: hiera.yml
@@ -30,7 +29,7 @@
 - name: Create cinder configmaps
   ignore_errors: yes
   k8s_v1_config_map:
-    name: cinder
+    name: cinder-api
     host: "{{coe_host}}"
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
@@ -307,7 +306,7 @@
     volumes:
       - name: kolla-config
         config_map:
-          name: cinder
+          name: cinder-api
 
 # Cinder Scheduler
 - name: create cinder-scheduler deployment
@@ -341,7 +340,7 @@
     volumes:
       - name: kolla-config
         config_map:
-          name: cinder
+          name: cinder-scheduler
 
 - name: Create Cinder Volume Deployment
   k8s_v1beta1_deployment:
@@ -375,4 +374,4 @@
     volumes:
       - name: kolla-config
         config_map:
-          name: cinder
+          name: cinder-volume
