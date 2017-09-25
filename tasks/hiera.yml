@@ -2,7 +2,22 @@
   include_role:
     name: 'ansible-role-k8s-tripleo'
   vars:
-    hieradata: '{{hiera_data}}'
+    hieradata: 
+      tripleo::profile::base::cinder::volume::dellemc_xtremio_iscsi_backend: true
+      tripleo::profile::base::cinder::volume::cinder_enable_iscsi_backend: true
+      tripleo::profile::base::cinder::volume::cinder_enable_rbd_backend: false
+      tripleo::profile::base::cinder::volume::cinder_enable_nfs_backend: false
+      tripleo::profile::base::cinder::volume::iscsi::cinder_lvm_loop_device_size: 10280
+      tripleo::profile::base::cinder::volume::iscsi::cinder_iscsi_helper: lioadm
+      tripleo::profile::base::cinder::volume::iscsi::cinder_iscsi_address: iscsid
+      tripleo::profile::base::cinder::volume::rbd::cinder_rbd_pool_name: volumes
+      tripleo::profile::base::cinder::volume::rbd::cinder_rbd_user_name: openstack
+      ceph::profile::params::fsid: 1611b996-d2d7-11e6-b1c2-5254004237d4
+      cinder::rabbit_userid: guest
+      cinder::rabbit_port: 5672
+      cinder::rabbit_password: rabbitpass
+
+
     hieradata_file: '{{hiera_data_file}}'
     schema:
       cinder::api::bind_port: bind_port
@@ -17,5 +32,33 @@
       cinder::database_connection: database.connection
       cinder::db::database_max_retries: database.max_retries
       cinder::db::database_db_max_retries: database.db_max_retries
+
+      tripleo::profile::base::cinder::volume::cinder_enable_iscsi_backend: cinder_enable_iscsi_backend
+      tripleo::profile::base::cinder::volume::cinder_enable_nfs_backend: cinder_enable_nfs_backend
+      tripleo::profile::base::cinder::volume::cinder_enable_rbd_backend: cinder_enable_rbd_backend
+      tripleo::profile::base::cinder::volume::nfs::cinder_nfs_mount_options: cinder_nfs_mount_options
+      tripleo::profile::base::cinder::volume::nfs::cinder_nfs_servers: cinder_nfs_servers
+      tripleo::profile::base::cinder::volume::nfs::cinder_nas_secure_file_operations: cinder_nas_secure_file_operations
+      tripleo::profile::base::cinder::volume::nfs::cinder_nas_secure_file_permissions: cinder_nas_secure_file_permissions
+      tripleo::profile::base::cinder::volume::iscsi::cinder_lvm_loop_device_size: cinder_lvm_loop_device_size
+      tripleo::profile::base::cinder::volume::iscsi::cinder_iscsi_helper: cinder_iscsi_helper
+      tripleo::profile::base::cinder::volume::iscsi::cinder_iscsi_protocol: cinder_iscsi_protocol
+      tripleo::profile::base::cinder::volume::iscsi::cinder_iscsi_address: cinder_iscsi_address
+      tripleo::profile::base::cinder::volume::rbd::cinder_rbd_pool_name: cinder_rbd_pool_name
+      tripleo::profile::base::cinder::volume::rbd::cinder_rbd_user_name: cinder_rbd_user_name
+
+      tripleo::profile::base::cinder::volume::dellemc_xtremio_iscsi_backend: dellemc_xtremio_iscsi_backend
+      cinder::backend::dellemc_xtremio_iscsi::max_over_subscription_ratio: xtremio.max_over_subscription_ratio
+      cinder::backend::dellemc_xtremio_iscsi::use_multipath_for_image_xfer: xtremio.use_multipath_for_image_xfer
+      cinder::backend::dellemc_xtremio_iscsi::volume_backend_name: xtremio.volume_backend_name
+      cinder::backend::dellemc_xtremio_iscsi::scan_ip: xtremio.scan_ip
+      cinder::backend::dellemc_xtremio_iscsi::xtremio_cluster_name: xtremio.xtremio_cluster_name
+      cinder::backend::dellemc_xtremio_iscsi::san_login: xtremio.san_login
+      cinder::backend::dellemc_xtremio_iscsi::san_password: xtremio.san_password
+      cinder::backend::dellemc_xtremio_iscsi::image_volume_cache_enabled: xtremio.image_volume_cache_enabled
+
+      ceph::profile::params::fsid: ceph_cluster_fsid
+
     default: '{{cinder_config}}'
     fact_variable: 'cinder_config'
+

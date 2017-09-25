@@ -1,0 +1,133 @@
+# List of init jobs for the pod go here
+- name: Create cinder-init-job configmaps
+  ignore_errors: yes
+  k8s_v1_config_map:
+    name: cinder-init-job
+    namespace: "{{ namespace }}"
+    state: present
+    debug: yes
+    data:
+      config.json: |
+        {
+            "command": "cinder-scheduler --config-file /etc/cinder/cinder.conf",
+            "config_files": [
+                {
+                    "source": "/var/lib/kolla/config_files/cinder.conf",
+                    "dest": "/etc/cinder/cinder.conf",
+                    "owner": "cinder",
+                    "perm": "0600"
+                }
+            ],
+            "permissions": [
+                {
+                    "path": "/var/lib/cinder",
+                    "owner": "cinder:cinder",
+                    "recurse": true
+                },
+                {
+                    "path": "/var/log/kolla/cinder",
+                    "owner": "cinder:cinder",
+                    "recurse": true
+                }
+            ]
+        }
+
+      cinder.conf: |
+        {{cinder_conf['content'] | b64decode}}
+
+- name: Create Cinder Database
+  k8s_v1_job:
+    name: cinder-create-db
+    namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
+    restart_policy: OnFailure
+    containers:
+    - name: cinder-create-db
+      image: tripleoupstream/centos-binary-kolla-toolbox:latest
+      image_pull_policy: IfNotPresent
+      command: ["sh", "-c"]
+      args:
+        - ansible localhost -m mysql_db -a
+          "login_host='mariadb'
+           login_port='3306'
+           login_user='root'
+           login_password='$DATABASE_PASSWORD'
+           name='cinder'"
+      env:
+        - name: DATABASE_PASSWORD
+          value: "{{ database_password }}"
+        - name: "TZ"
+          value: "UTC"
+  register: db_create
+
+- name: Create Cinder User in the database
+  k8s_v1_job:
+    name: cinder-create-user
+    namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
+    restart_policy: OnFailure
+    containers:
+    - name: cinder-create-db
+      image: tripleoupstream/centos-binary-kolla-toolbox:latest
+      image_pull_policy: IfNotPresent
+      command: ["sh", "-c"]
+      args:
+        - ansible localhost -m mysql_user -a
+          "login_host='mariadb'
+           login_port='3306'
+           login_user='root'
+           login_password='$DATABASE_PASSWORD'
+           name='cinder'
+           password='$CINDER_DATABASE_PASSWORD'
+           host='%'
+           priv='cinder.*:ALL'
+           append_privs='yes'"
+      env:
+        - name: CINDER_DATABASE_PASSWORD
+          value: "{{ cinder_db_password }}"
+        - name: DATABASE_PASSWORD
+          value: "{{database_password}}"
+        - name: "TZ"
+          value: "UTC"
+  when: db_create|succeeded
+
+# Cinder Scheduler won't start without cinder tables present
+- name: Create Cinder Tables
+  k8s_v1_job:
+    name: cinder-create-tables
+    namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
+    restart_policy: OnFailure
+    containers:
+    - name: cinder-create-db
+      image: tripleoupstream/centos-binary-cinder-api:latest
+      image_pull_policy: IfNotPresent
+#      command: ["/usr/bin/cinder-manage", "db", "sync"]
+      env:
+        - name: KOLLA_KUBERNETES
+          value: ""
+        - name: KOLLA_BOOTSTRAP
+          value: ""
+        - name: KOLLA_CONFIG_STRATEGY
+          value: "COPY_ONCE"
+        - name: "TZ"
+          value: "UTC"
+      volume_mounts:
+        - name: kolla-config
+          mountPath: /var/lib/kolla/config_files/
+    volumes:
+      - name: kolla-config
+        config_map:
+          name: cinder-init-job
+  when: db_create|succeeded
+  register: cinder_bootstrap
+
+# Remove the init-job configmap.
+- name: Delete cinder-init-job configmaps
+  ignore_errors: yes
+  k8s_v1_config_map:
+    name: cinder-init-job
+    namespace: "{{namespace}}"
+    state: absent
+  when: cinder_bootstrap|succeeded
+

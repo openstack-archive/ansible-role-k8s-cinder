@@ -1,0 +1,87 @@
+- name: Create cinder-volume-rbd configmaps
+  ignore_errors: yes
+  k8s_v1_config_map:
+    name: cinder-volume-rbd
+    namespace: "{{ namespace }}"
+    state: present
+    debug: yes
+    labels:
+      service: cinder-volume-rbd
+    data:
+      config.json: |
+        {
+            "command": "/usr/bin/cinder-volume --config-file /usr/share/cinder/cinder-dist.conf --config-file /etc/cinder/cinder.conf",
+            "config_files": [
+                {
+                    "source": "/var/lib/kolla/config_files/cinder.conf",
+                    "dest": "/etc/cinder/cinder.conf",
+                    "owner": "cinder",
+                    "perm": "0600"
+                },
+                {
+                    "source": "/var/lib/kolla/config_files/ceph.conf",
+                    "dest": "/etc/ceph/ceph.conf",
+                    "owner": "root",
+                    "perm": "0644"
+                },
+                {
+                    "source": "/var/lib/kolla/config_files/ceph.client.wshed.keyring",
+                    "dest": "/etc/ceph/ceph.client.wshed.keyring",
+                    "owner": "root",
+                    "perm": "0644"
+                }
+            ],
+            "permissions": [
+                {
+                    "path": "/var/lib/cinder",
+                    "owner": "cinder:cinder",
+                    "recurse": true
+                },
+                {
+                    "path": "/var/log/kolla/cinder",
+                    "owner": "cinder:cinder",
+                    "recurse": true
+                }
+            ]
+        }
+
+      cinder.conf: |
+        {{cinder_conf['content'] | b64decode}}
+
+      ceph.conf: |
+        {{ceph_conf['content'] | b64decode}}
+
+      ceph.client.wshed.keyring: |
+        {{ceph_client_keyring['content'] | b64decode}}
+
+- name: Create Cinder Volume Deployment
+  k8s_v1beta1_deployment:
+    name: cinder-volume-rbd
+    namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
+    labels:
+      app: cinder-volume-rbd
+      service: cinder-volume-rbd
+    replicas: 1
+    spec_template_metadata_labels:
+      app: cinder-volume-rbd
+      service: cinder-volume-rbd
+    containers:
+    - name: cinder-volume
+      image: tripleoupstream/centos-binary-cinder-volume:latest
+      image_pull_policy: IfNotPresent
+      volumeMounts:
+        - name: kolla-config
+          mountPath: /var/lib/kolla/config_files/
+      env:
+        - name: TZ
+          value: UTC
+        - name: KOLLA_CONFIG_STRATEGY
+          value: COPY_ALWAYS
+        - name: KOLLA_KUBERNETES
+          value: ""
+    volumes:
+      - name: kolla-config
+        config_map:
+          name: cinder-volume-rbd
+

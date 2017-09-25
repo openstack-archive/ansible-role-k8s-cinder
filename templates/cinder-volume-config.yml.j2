@@ -1,0 +1,30 @@
+command: "/usr/bin/cinder-volume --config-file /usr/share/cinder/cinder-dist.conf --config-file /etc/cinder/cinder.conf"
+config_files:
+- source: "/var/lib/kolla/config_files/cinder.conf"
+  dest: "/etc/cinder/cinder.conf"
+  owner: cinder
+  perm: '0600'
+- source: "/var/lib/kolla/config_files/ceph.conf"
+  dest: "/etc/ceph/ceph.conf"
+  owner: root
+  perm: '0644'
+{% if result.conf_dict['cinder_enable_rbd_backend'] %}
+- source: "/var/lib/kolla/config_files/ceph.client.{{result.conf_dict['cinder_rbd_user_name']}}.keyring"
+  dest: "/etc/ceph/ceph.client.{{result.conf_dict['cinder_rbd_user_name']}}.keyring"
+  owner: root
+  perm: '0644'
+{% endif %}
+{% if result.conf_dict['cinder_enable_iscsi_backend'] %}
+- source: "/var/lib/kolla/config_files/lvm.conf"
+  dest: "/etc/lvm/lvm.conf"
+  owner: root
+  perm: '0644'
+{% endif %}
+permissions:
+- path: "/var/lib/cinder"
+  owner: cinder:cinder
+  recurse: true
+- path: "/var/log/kolla/cinder"
+  owner: cinder:cinder
+  recurse: true
+

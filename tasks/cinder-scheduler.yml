@@ -1,0 +1,68 @@
+- name: Create cinder-scheduler configmaps
+  ignore_errors: yes
+  k8s_v1_config_map:
+    name: cinder-scheduler
+    namespace: "{{ namespace }}"
+    state: present
+    debug: yes
+    labels:
+      service: cinder-scheduler
+    data:
+      config.json: |
+        {
+            "command": "cinder-scheduler --config-file /var/lib/kolla/config_files/cinder.conf",
+            "config_files": [
+                {
+                    "source": "/var/lib/kolla/config_files/cinder.conf",
+                    "dest": "/etc/cinder/cinder.conf",
+                    "owner": "cinder",
+                    "perm": "0600"
+                }
+            ],
+            "permissions": [
+                {
+                    "path": "/var/lib/cinder",
+                    "owner": "cinder:cinder",
+                    "recurse": true
+                },
+                {
+                    "path": "/var/log/kolla/cinder",
+                    "owner": "cinder:cinder",
+                    "recurse": true
+                }
+            ]
+        }
+
+      cinder.conf: |
+        {{cinder_conf['content'] | b64decode}}
+
+- name: create cinder-scheduler deployment
+  k8s_v1beta1_deployment:
+    name: cinder-scheduler
+    namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
+    labels:
+      app: cinder-scheduler
+      service: cinder-scheduler
+    replicas: 1
+    spec_template_metadata_labels:
+      app: cinder-scheduler
+      service: cinder-scheduler
+    containers:
+    - name: cinder-scheduler
+      image: tripleoupstream/centos-binary-cinder-scheduler:latest
+      env:
+        - name: TZ
+          value: UTC
+        - name: KOLLA_CONFIG_STRATEGY
+          value: COPY_ALWAYS
+        - name: KOLLA_KUBERNETES
+          value: ""
+      volume_mounts:
+        - name: kolla-config
+          mountPath: /var/lib/kolla/config_files/
+    volumes:
+      - name: kolla-config
+        config_map:
+          name: cinder-scheduler
+
