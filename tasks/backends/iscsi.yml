@@ -88,7 +88,7 @@
 
 
 - name: Create Cinder Volume Deployment
-  k8s_v1beta1_deployment:
+  k8s_apps_v1beta1_deployment:
     name: cinder-volume-iscsi
     namespace: "{{ namespace }}"
     service_account_name: '{{ privileged_service_account }}'
@@ -147,7 +147,7 @@
           name: cinder-volume-iscsi
 
 - name: Create Iscsid Deployment
-  k8s_v1beta1_deployment:
+  k8s_apps_v1beta1_deployment:
     name: iscsid
     namespace: '{{ namespace }}'
     service_account_name: '{{ privileged_service_account }}'

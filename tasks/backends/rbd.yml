@@ -55,7 +55,7 @@
         {{ceph_client_keyring['content'] | b64decode}}
 
 - name: Create Cinder Volume Deployment
-  k8s_v1beta1_deployment:
+  k8s_apps_v1beta1_deployment:
     name: cinder-volume-rbd
     namespace: "{{ namespace }}"
     service_account_name: "{{ service_account }}"

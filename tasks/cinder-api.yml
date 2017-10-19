@@ -63,9 +63,6 @@
 - name: create cinder-api service
   k8s_v1_service:
     name: cinder
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     namespace: "{{ namespace }}"
     labels:
       app: cinder-api
@@ -81,9 +78,6 @@
 - name: Create Cinder-api Deployment
   k8s_apps_v1beta1_deployment:
     name: cinder-api
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     namespace: "{{ namespace }}"
     service_account_name: "{{ service_account }}"
     labels:

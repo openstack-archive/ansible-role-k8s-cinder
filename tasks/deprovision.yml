@@ -1,62 +1,41 @@
 - name: Delete cinder-create-db job
   k8s_v1_job:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: cinder-create-db
     namespace: "{{ namespace }}"
     state: absent
 
 - name: Delete cinder db-sync job
   k8s_v1_job:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: cinder-create-tables
     namespace: "{{ namespace }}"
     state: absent
 
 - name: Delete cinder db-sync job
   k8s_v1_job:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: cinder-create-user
     namespace: "{{ namespace }}"
     state: absent
 
 - name: Delete cinder-api deployment
   k8s_apps_v1beta1_deployment:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: cinder-api
     namespace: openstack
     state: absent
 
 - name: Delete cinder-scheduler deployment
   k8s_apps_v1beta1_deployment:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: cinder-scheduler
     namespace: openstack
     state: absent
 
 - name: Delete cinder-volume deployment
   k8s_apps_v1beta1_deployment:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: cinder-volume
     namespace: openstack
     state: absent
 
 - name: Delete cinder service
   k8s_v1_service:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: cinder
     namespace: openstack
     state: absent
@@ -64,27 +43,18 @@
 - name: Delete cinder configmaps
   ignore_errors: yes
   k8s_v1_config_map:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: cinder-volume
     namespace: openstack
     state: absent
 - name: Delete cinder configmaps
   ignore_errors: yes
   k8s_v1_config_map:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: cinder-scheduler
     namespace: openstack
     state: absent
 - name: Delete cinder configmaps
   ignore_errors: yes
   k8s_v1_config_map:
-    host: "{{coe_host}}"
-    context: "{{kube_context}}"
-    kubeconfig: "{{config_file}}"
     name: cinder-api
     namespace: openstack
     state: absent
