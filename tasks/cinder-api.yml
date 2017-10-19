@@ -79,7 +79,7 @@
         target_port: 8776
 
 - name: Create Cinder-api Deployment
-  k8s_v1beta1_deployment:
+  k8s_apps_v1beta1_deployment:
     name: cinder-api
     host: "{{coe_host}}"
     context: "{{kube_context}}"

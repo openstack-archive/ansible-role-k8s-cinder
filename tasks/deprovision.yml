@@ -26,7 +26,7 @@
     state: absent
 
 - name: Delete cinder-api deployment
-  k8s_v1beta1_deployment:
+  k8s_apps_v1beta1_deployment:
     host: "{{coe_host}}"
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
@@ -35,7 +35,7 @@
     state: absent
 
 - name: Delete cinder-scheduler deployment
-  k8s_v1beta1_deployment:
+  k8s_apps_v1beta1_deployment:
     host: "{{coe_host}}"
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
@@ -44,7 +44,7 @@
     state: absent
 
 - name: Delete cinder-volume deployment
-  k8s_v1beta1_deployment:
+  k8s_apps_v1beta1_deployment:
     host: "{{coe_host}}"
     context: "{{kube_context}}"
     kubeconfig: "{{config_file}}"
