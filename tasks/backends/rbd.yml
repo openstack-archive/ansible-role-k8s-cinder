@@ -1,3 +1,25 @@
+- name: Generate config files
+  config_template:
+    src: rbd/ceph.conf.j2
+    dest: /tmp/ceph.conf
+    config_type: ini
+
+- name: Read configs into memory
+  slurp:
+    src: "/tmp/ceph.conf"
+  register: "ceph_conf"
+
+- name: Generate config files
+  config_template:
+    src: rbd/ceph.client.cinder.keyring
+    dest: /tmp/ceph.client.cinder.keyring
+    config_type: ini
+
+- name: Read configs into memory
+  slurp:
+    src: "/tmp/ceph.client.cinder.keyring"
+  register: "ceph_client_cinder_keyring"
+
 - name: Create cinder-volume-rbd configmaps
   ignore_errors: yes
   k8s_v1_config_map:
@@ -25,8 +47,8 @@
                     "perm": "0644"
                 },
                 {
-                    "source": "/var/lib/kolla/config_files/ceph.client.wshed.keyring",
-                    "dest": "/etc/ceph/ceph.client.wshed.keyring",
+                    "source": "/var/lib/kolla/config_files/ceph.client.cinder.keyring",
+                    "dest": "/etc/ceph/ceph.client.cinder.keyring",
                     "owner": "root",
                     "perm": "0644"
                 }
@@ -51,8 +73,9 @@
       ceph.conf: |
         {{ceph_conf['content'] | b64decode}}
 
-      ceph.client.wshed.keyring: |
-        {{ceph_client_keyring['content'] | b64decode}}
+      ceph.client.cinder.keyring: |
+        {{ceph_client_cinder_keyring['content'] | b64decode}}
+
 
 - name: Create Cinder Volume Deployment
   k8s_apps_v1beta1_deployment:

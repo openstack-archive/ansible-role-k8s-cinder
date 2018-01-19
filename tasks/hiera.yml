@@ -3,6 +3,7 @@
     name: 'ansible-role-k8s-tripleo'
   vars:
     schema:
+      cinder::auth_strategy: DEFAULT.auth_strategy
       cinder::api::bind_port: bind_port
       cinder::rabbit_userid: oslo_messaging_rabbit.rabbit_userid
       cinder::rabbit_port: oslo_messaging_rabbit.rabbit_port
@@ -10,8 +11,8 @@
       cinder::rabbit_use_ssl: oslo_messaging_rabbit.rabbit_use_ssl
       cinder::rabbit_host: oslo_messaging_rabbit.rabbit_host
       cinder::rabbit_heartbeat_timeout_threshold: oslo_messaging_rabbit.rabbit_heartbeat_timeout_threshold
-      cinder::glance::glance_api_servers: glance_api_servers
-      cinder::glance::glance_api_version: glance_api_version
+      cinder::glance::glance_api_servers: DEFAULT.glance_api_servers
+      cinder::glance::glance_api_version: DEFAULT.glance_api_version
       cinder::database_connection: database.connection
       cinder::db::database_max_retries: database.max_retries
       cinder::db::database_db_max_retries: database.db_max_retries
@@ -19,7 +20,6 @@
       cinder::db::mysql::host: database.host
       cinder::db::mysql::password: database.password
       cinder::db::mysql::user: database.user
-
 
       tripleo::profile::base::cinder::volume::cinder_enable_iscsi_backend: cinder_enable_iscsi_backend
       tripleo::profile::base::cinder::volume::cinder_enable_nfs_backend: cinder_enable_nfs_backend
@@ -39,12 +39,13 @@
       cinder::backend::dellemc_xtremio_iscsi::max_over_subscription_ratio: xtremio.max_over_subscription_ratio
       cinder::backend::dellemc_xtremio_iscsi::use_multipath_for_image_xfer: xtremio.use_multipath_for_image_xfer
       cinder::backend::dellemc_xtremio_iscsi::volume_backend_name: xtremio.volume_backend_name
-      cinder::backend::dellemc_xtremio_iscsi::scan_ip: xtremio.scan_ip
+      cinder::backend::dellemc_xtremio_iscsi::san_ip: xtremio.san_ip
       cinder::backend::dellemc_xtremio_iscsi::xtremio_cluster_name: xtremio.xtremio_cluster_name
       cinder::backend::dellemc_xtremio_iscsi::san_login: xtremio.san_login
       cinder::backend::dellemc_xtremio_iscsi::san_password: xtremio.san_password
       cinder::backend::dellemc_xtremio_iscsi::image_volume_cache_enabled: xtremio.image_volume_cache_enabled
 
+      tripleo::profile::base::ceph::ceph_mon_host: ceph_mon_host
       ceph::profile::params::fsid: ceph_cluster_fsid
 
     default: '{{cinder_config}}'

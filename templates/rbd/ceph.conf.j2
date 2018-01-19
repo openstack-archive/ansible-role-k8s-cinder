@@ -1,6 +1,6 @@
 [global]
-fsid = 
-mon_host = 
+fsid = {{result.conf_dict['ceph_cluster_fsid']}}
+mon_host = {{result.conf_dict['ceph_mon_host']}
 auth_cluster_required = cephx
 auth_service_required = cephx
 auth_client_required = cephx

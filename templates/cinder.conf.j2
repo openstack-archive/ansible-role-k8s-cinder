@@ -1,10 +1,10 @@
 [DEFAULT]
-glance_api_servers={{result.conf_dict['glance_api_servers']}}
-glance_api_version={{result.conf_dict['glance_api_version']}}
+glance_api_servers={{result.conf_dict['DEFAULT']['glance_api_servers']}}
+glance_api_version={{result.conf_dict['DEFAULT']['glance_api_version']}}
 enable_v3_api=True
 storage_availability_zone=nova
 default_availability_zone=nova
-auth_strategy={{result.conf_dict['auth_strategy']}}
+auth_strategy={{result.conf_dict['DEFAULT']['auth_strategy']}}
 enabled_backends={{ enabled_backends | join(",") }}
 nova_catalog_info=compute:nova:internalURL
 nova_catalog_admin_info=compute:nova:adminURL
