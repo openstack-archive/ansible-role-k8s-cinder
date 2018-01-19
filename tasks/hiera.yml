@@ -2,23 +2,6 @@
   include_role:
     name: 'ansible-role-k8s-tripleo'
   vars:
-    hieradata: 
-      tripleo::profile::base::cinder::volume::dellemc_xtremio_iscsi_backend: true
-      tripleo::profile::base::cinder::volume::cinder_enable_iscsi_backend: true
-      tripleo::profile::base::cinder::volume::cinder_enable_rbd_backend: false
-      tripleo::profile::base::cinder::volume::cinder_enable_nfs_backend: false
-      tripleo::profile::base::cinder::volume::iscsi::cinder_lvm_loop_device_size: 10280
-      tripleo::profile::base::cinder::volume::iscsi::cinder_iscsi_helper: lioadm
-      tripleo::profile::base::cinder::volume::iscsi::cinder_iscsi_address: iscsid
-      tripleo::profile::base::cinder::volume::rbd::cinder_rbd_pool_name: volumes
-      tripleo::profile::base::cinder::volume::rbd::cinder_rbd_user_name: openstack
-      ceph::profile::params::fsid: 1611b996-d2d7-11e6-b1c2-5254004237d4
-      cinder::rabbit_userid: guest
-      cinder::rabbit_port: 5672
-      cinder::rabbit_password: rabbitpass
-
-
-    hieradata_file: '{{hiera_data_file}}'
     schema:
       cinder::api::bind_port: bind_port
       cinder::rabbit_userid: oslo_messaging_rabbit.rabbit_userid
@@ -32,6 +15,11 @@
       cinder::database_connection: database.connection
       cinder::db::database_max_retries: database.max_retries
       cinder::db::database_db_max_retries: database.db_max_retries
+      cinder::db::mysql::dbname: database.dbname
+      cinder::db::mysql::host: database.host
+      cinder::db::mysql::password: database.password
+      cinder::db::mysql::user: database.user
+
 
       tripleo::profile::base::cinder::volume::cinder_enable_iscsi_backend: cinder_enable_iscsi_backend
       tripleo::profile::base::cinder::volume::cinder_enable_nfs_backend: cinder_enable_nfs_backend

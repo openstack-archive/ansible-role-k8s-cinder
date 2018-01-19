@@ -104,7 +104,6 @@
       securityContext:
         privileged: true
       image: tripleoupstream/centos-binary-cinder-volume:latest
-      image_pull_policy: IfNotPresent
       volumeMounts:
         - name: kolla-config
           mountPath: /var/lib/kolla/config_files/
@@ -165,7 +164,6 @@
       securityContext:
         privileged: true
       image: tripleoupstream/centos-binary-iscsid:latest
-      image_pull_policy: IfNotPresent
       volumeMounts:
         - mountPath: /etc/localtime
           name: host-etc-localtime

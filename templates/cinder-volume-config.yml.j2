@@ -4,11 +4,11 @@ config_files:
   dest: "/etc/cinder/cinder.conf"
   owner: cinder
   perm: '0600'
+{% if result.conf_dict['cinder_enable_rbd_backend'] %}
 - source: "/var/lib/kolla/config_files/ceph.conf"
   dest: "/etc/ceph/ceph.conf"
   owner: root
   perm: '0644'
-{% if result.conf_dict['cinder_enable_rbd_backend'] %}
 - source: "/var/lib/kolla/config_files/ceph.client.{{result.conf_dict['cinder_rbd_user_name']}}.keyring"
   dest: "/etc/ceph/ceph.client.{{result.conf_dict['cinder_rbd_user_name']}}.keyring"
   owner: root

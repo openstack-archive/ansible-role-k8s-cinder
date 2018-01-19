@@ -1,10 +1,10 @@
 [DEFAULT]
-glance_api_servers=none
-glance_api_version=2
+glance_api_servers={{result.conf_dict['glance_api_servers']}}
+glance_api_version={{result.conf_dict['glance_api_version']}}
 enable_v3_api=True
 storage_availability_zone=nova
 default_availability_zone=nova
-auth_strategy=noauth
+auth_strategy={{result.conf_dict['auth_strategy']}}
 enabled_backends={{ enabled_backends | join(",") }}
 nova_catalog_info=compute:nova:internalURL
 nova_catalog_admin_info=compute:nova:adminURL
@@ -12,14 +12,13 @@ scheduler_driver=cinder.scheduler.filter_scheduler.FilterScheduler
 osapi_volume_listen=0.0.0.0
 osapi_volume_workers=2
 log_dir=/var/log/cinder
-#transport_url=rabbit://guest:rabbitpass@rabbitmq:5672/?ssl=0
 transport_url=rabbit://{{result.conf_dict['oslo_messaging_rabbit']['rabbit_userid']}}:{{result.conf_dict['oslo_messaging_rabbit']['rabbit_password']}}@rabbitmq:{{result.conf_dict['oslo_messaging_rabbit']['rabbit_port']}}/?ssl=0
 rpc_backend=rabbit
 control_exchange=openstack
 api_paste_config=/etc/cinder/api-paste.ini
 
 [database]
-connection=mysql+pymysql://cinder:cinderpass@mariadb:3306/cinder
+connection=mysql+pymysql://{{result.conf_dict['database']['user']}}:{{result.conf_dict['database']['password']}}@{{result.conf_dict['database']['host']}}:3306/{{result.conf_dict['database']['dbname']}}
 max_retries=-1
 db_max_retries=-1
 
@@ -31,11 +30,11 @@ driver=messagingv2
 transport_url=rabbit://{{result.conf_dict['oslo_messaging_rabbit']['rabbit_userid']}}:{{result.conf_dict['oslo_messaging_rabbit']['rabbit_password']}}@rabbitmq:{{result.conf_dict['oslo_messaging_rabbit']['rabbit_port']}}/?ssl=0
 
 [oslo_messaging_rabbit]
-ssl=False
-rabbit_port=5672
-rabbit_userid=guest
-rabbit_password=rabbitpass
-heartbeat_timeout_threshold=60
+ssl={{result.conf_dict['oslo_messaging_rabbit']['rabbit_use_ssl']}}
+rabbit_port={{result.conf_dict['oslo_messaging_rabbit']['rabbit_port']}}
+rabbit_userid={{result.conf_dict['oslo_messaging_rabbit']['rabbit_userid']}}
+rabbit_password={{result.conf_dict['oslo_messaging_rabbit']['rabbit_password']}}
+heartbeat_timeout_threshold={{result.conf_dict['oslo_messaging_rabbit']['rabbit_heartbeat_timeout_threshold']}}
 
 [oslo_middleware]
 enable_proxy_headers_parsing=True
@@ -55,15 +54,15 @@ iscsi_protocol=iscsi
 
 {% if result.conf_dict['dellemc_xtremio_iscsi_backend'] %}
 [xtremio]
-max_over_subscription_ratio = 40.0
-use_multipath_for_image_xfer=true
+max_over_subscription_ratio = {{result.conf_dict['xtremio']['max_over_subscription_ratio']}}
+use_multipath_for_image_xfer= {{result.conf_dict['xtremio']['use_multipath_for_image_xfer']}}
 volume_backend_name=xtremio
 volume_driver=cinder.volume.drivers.emc.xtremio.XtremIOISCSIDriver
-san_ip=10.35.146.7
-xtremio_cluster_name=RHEL-QE
-san_login=cinder
-san_password=qum5net
-image_volume_cache_enabled = false
+san_ip={{result.conf_dict['xtremio']['san_ip']}}
+xtremio_cluster_name={{result.conf_dict['xtremio']['xtremio_cluster_name']}}
+san_login={{result.conf_dict['xtremio']['san_login']}}
+san_password={{result.conf_dict['xtremio']['san_password']}}
+image_volume_cache_enabled={{result.conf_dict['xtremio']['image_volume_cache_enabled']}}
 {% endif %}
 
 {% if result.conf_dict['cinder_enable_rbd_backend'] %}
