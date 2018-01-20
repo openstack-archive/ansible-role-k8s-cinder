@@ -3,7 +3,7 @@
 
 - include: backends/iscsi.yml
   when: result.conf_dict['cinder_enable_iscsi_backend']
-- include: backends/ceph.yml
+- include: backends/rbd.yml
   when: result.conf_dict['cinder_enable_rbd_backend']
 - include: backends/xtremio.yml
   when: result.conf_dict['dellemc_xtremio_iscsi_backend']
