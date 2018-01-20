@@ -47,6 +47,7 @@
 
       tripleo::profile::base::ceph::ceph_mon_host: ceph_mon_host
       ceph::profile::params::fsid: ceph_cluster_fsid
+      ceph::profile::params::authentication_type: authentication_type
 
     default: '{{cinder_config}}'
     fact_variable: 'cinder_config'
