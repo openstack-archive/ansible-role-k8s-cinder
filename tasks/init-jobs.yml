@@ -39,7 +39,6 @@
   k8s_v1_job:
     name: cinder-create-db
     namespace: "{{ namespace }}"
-    service_account_name: "{{ service_account }}"
     restart_policy: OnFailure
     containers:
     - name: cinder-create-db
@@ -64,7 +63,6 @@
   k8s_v1_job:
     name: cinder-create-user
     namespace: "{{ namespace }}"
-    service_account_name: "{{ service_account }}"
     restart_policy: OnFailure
     containers:
     - name: cinder-create-db
@@ -96,7 +94,6 @@
   k8s_v1_job:
     name: cinder-create-tables
     namespace: "{{ namespace }}"
-    service_account_name: "{{ service_account }}"
     restart_policy: OnFailure
     containers:
     - name: cinder-create-db

@@ -3,7 +3,6 @@
 #config_file: "~/.kube/config"
 action: provision
 namespace: openstack
-service_account: openstack
 privileged_service_account: openstack-priv
 database_password: weakpassword
 cinder_db_password: cinderpass
