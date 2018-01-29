@@ -61,6 +61,7 @@
   k8s_apps_v1beta1_deployment:
     name: cinder-volume-rbd
     namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
     labels:
       app: cinder-volume-rbd
       service: cinder-volume-rbd

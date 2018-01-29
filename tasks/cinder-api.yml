@@ -79,6 +79,7 @@
   k8s_apps_v1beta1_deployment:
     name: cinder-api
     namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
     labels:
       app: cinder-api
       service: cinder-api

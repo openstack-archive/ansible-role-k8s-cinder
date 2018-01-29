@@ -7,3 +7,5 @@
   when: result.conf_dict['cinder_enable_rbd_backend']
 - include: backends/xtremio.yml
   when: result.conf_dict['dellemc_xtremio_iscsi_backend']
+- include: backends/netapp.yml
+  when: result.conf_dict['cinder_enable_netapp_backend']
