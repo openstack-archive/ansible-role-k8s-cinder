@@ -14,3 +14,8 @@
     enabled_backends: "{{ enabled_backends }} + [ 'xtremio' ]"
   when: result.conf_dict['dellemc_xtremio_iscsi_backend']
 
+- name: Append backend to enable_backends list
+  set_fact:
+    enabled_backends: "{{ enabled_backends }} + [ 'tripleo_netapp' ]"
+  when: result.conf_dict['cinder_enable_netapp_backend']
+

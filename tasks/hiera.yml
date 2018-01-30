@@ -50,7 +50,7 @@
       ceph::profile::params::authentication_type: authentication_type
 
       tripleo::profile::base::cinder::volume::cinder_enable_netapp_backend: cinder_enable_netapp_backend
-      cinder::backend::netapp::title: title: tripleo_netapp.title
+      cinder::backend::netapp::title: tripleo_netapp.title
       cinder::backend::netapp::netapp_login: tripleo_netapp.netapp_login
       cinder::backend::netapp::netapp_password: tripleo_netapp.netapp_password
       cinder::backend::netapp::netapp_server_hostname: tripleo_netapp.netapp_server_hostname

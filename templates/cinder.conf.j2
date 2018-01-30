@@ -82,25 +82,5 @@ title = tripleo_netapp
 netapp_login = {{result.conf_dict['tripleo_netapp']['netapp_login']}}
 netapp_password = {{result.conf_dict['tripleo_netapp']['netapp_password']}}
 netapp_server_hostname = {{result.conf_dict['tripleo_netapp']['netapp_server_hostname']}}
-netapp_server_port = {% if {{result.conf_dict['tripleo_netapp']['netapp_server_port']}} %} {{result.conf_dict['tripleo_netapp']['netapp_server_port']}} {% else %} 80 {% endif %}
-netapp_size_multiplier = {% if {{result.conf_dict['tripleo_netapp']['netapp_size_multiplier']}} %} {{result.conf_dict['tripleo_netapp']['netapp_size_multiplier']}} {% else %} 1.2 {% endif %}
-netapp_storage_family = {% if {{result.conf_dict['tripleo_netapp']['netapp_storage_family']}} %} {{result.conf_dict['tripleo_netapp']['netapp_storage_family']}} {% else %} ontap_cluster {% endif %}
-netapp_storage_protocol =  {% if {{result.conf_dict['tripleo_netapp']['netapp_storage_protocol']}} %} {{result.conf_dict['tripleo_netapp']['netapp_storage_protocol']}} {% else %} nfs {% endif %}
-netapp_transport_type = {% if {{result.conf_dict['tripleo_netapp']['netapp_transport_type']}} %} {{result.conf_dict['tripleo_netapp']['netapp_transport_type']}} {% else %} nfs {% endif %}
-netapp_vfiler = {% if {{result.conf_dict['tripleo_netapp']['netapp_vfiler']}} %} {{result.conf_dict['tripleo_netapp']['netapp_vfiler']}} {% else %} {% endif %}
-netapp_volume_list = {% if {{result.conf_dict['tripleo_netapp']['netapp_volume_list']}} %} {{result.conf_dict['tripleo_netapp']['netapp_volume_list']}} {% else %} {% endif %}
-netapp_vserver = {% if {{result.conf_dict['tripleo_netapp']['netapp_vserver']}} %} {{result.conf_dict['tripleo_netapp']['netapp_vserver']}} {% else %} {% endif %}
-netapp_partner_backend_name = {% if {{result.conf_dict['tripleo_netapp']['netapp_partner_backend_name']}} %} {{result.conf_dict['tripleo_netapp']['netapp_partner_backend_name']}} {% else %} {% endif %}
-nfs_shares = {% if {{result.conf_dict['tripleo_netapp']['nfs_shares']}} %} {{result.conf_dict['tripleo_netapp']['nfs_shares']}} {% else %} {% endif %}
-nfs_shares_config = {% if {{result.conf_dict['tripleo_netapp']['nfs_shares_config']}} %} {{result.conf_dict['tripleo_netapp']['nfs_shares_config']}} {% else %} /etc/cinder/shares.conf {% endif %}
-nfs_mount_options = {% if {{result.conf_dict['tripleo_netapp']['nfs_mount_options']}} %} {{result.conf_dict['tripleo_netapp']['nfs_mount_options']}} {% else %} {% endif %}
-netapp_copyoffload_tool_path = if {{result.conf_dict['tripleo_netapp']['netapp_copyoffload_tool_path']}} %} {{result.conf_dict['tripleo_netapp']['netapp_copyoffload_tool_path']}} {% else %} {% endif %}
-netapp_controller_ips = if {{result.conf_dict['tripleo_netapp']['netapp_controller_ips']}} %} {{result.conf_dict['tripleo_netapp']['netapp_controller_ips']}} {% else %} {% endif %}
-netapp_sa_password = if {{result.conf_dict['tripleo_netapp']['netapp_sa_password']}} %} {{result.conf_dict['tripleo_netapp']['netapp_sa_password']}} {% else %} {% endif %}
-netapp_storage_pools = if {{result.conf_dict['tripleo_netapp']['netapp_storage_pools']}} %} {{result.conf_dict['tripleo_netapp']['netapp_storage_pools']}} {% else %} {% endif %}
-netapp_host_type =if {{result.conf_dict['tripleo_netapp']['netapp_host_type']}} %} {{result.conf_dict['tripleo_netapp']['netapp_host_type']}} {% else %} {% endif %}
-netapp_webservice_path = if {{result.conf_dict['tripleo_netapp']['netapp_webservice_path']}} %} {{result.conf_dict['tripleo_netapp']['netapp_webservice_path']}} {% else %} /devmgr/v2 {% endif %}
-nas_secure_file_operations = if {{result.conf_dict['tripleo_netapp']['nas_secure_file_operations']}} %} {{result.conf_dict['tripleo_netapp']['nas_secure_file_operations']}} {% else %} false {% endif %}
-nas_secure_file_permissions = if {{result.conf_dict['tripleo_netapp']['nas_secure_file_permissions']}} %} {{result.conf_dict['tripleo_netapp']['nas_secure_file_permissions']}} {% else %} false {% endif %}
 {% endif %}
 
