@@ -89,7 +89,7 @@
       service: cinder-api
     containers:
     - name: cinder-api
-      image: tripleoupstream/centos-binary-cinder-api:latest
+      image: tripleomaster/centos-binary-cinder-api:current-tripleo
       ports:
         - container_port: 8776
           protocol: TCP
