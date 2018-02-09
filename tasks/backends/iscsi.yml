@@ -103,7 +103,7 @@
     - name: cinder-volume
       securityContext:
         privileged: true
-      image: tripleoupstream/centos-binary-cinder-volume:latest
+      image: tripleomaster/centos-binary-cinder-volume:current-tripleo
       volumeMounts:
         - name: kolla-config
           mountPath: /var/lib/kolla/config_files/
@@ -163,7 +163,7 @@
     - name: iscsid
       securityContext:
         privileged: true
-      image: tripleoupstream/centos-binary-iscsid:latest
+      image: tripleomaster/centos-binary-iscsid:current-tripleo
       volumeMounts:
         - mountPath: /etc/localtime
           name: host-etc-localtime

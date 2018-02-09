@@ -42,7 +42,7 @@
     restart_policy: OnFailure
     containers:
     - name: cinder-create-db
-      image: tripleoupstream/centos-binary-kolla-toolbox:latest
+      image: tripleomaster/centos-binary-kolla-toolbox:current-tripleo
       image_pull_policy: IfNotPresent
       command: ["sh", "-c"]
       args:
@@ -66,7 +66,7 @@
     restart_policy: OnFailure
     containers:
     - name: cinder-create-db
-      image: tripleoupstream/centos-binary-kolla-toolbox:latest
+      image: tripleomaster/centos-binary-kolla-toolbox:current-tripleo
       image_pull_policy: IfNotPresent
       command: ["sh", "-c"]
       args:
@@ -97,7 +97,7 @@
     restart_policy: OnFailure
     containers:
     - name: cinder-create-db
-      image: tripleoupstream/centos-binary-cinder-api:latest
+      image: tripleomaster/centos-binary-cinder-api:current-tripleo
       image_pull_policy: IfNotPresent
 #      command: ["/usr/bin/cinder-manage", "db", "sync"]
       env:

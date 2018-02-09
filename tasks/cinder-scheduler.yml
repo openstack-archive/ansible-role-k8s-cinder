@@ -50,7 +50,7 @@
       service: cinder-scheduler
     containers:
     - name: cinder-scheduler
-      image: tripleoupstream/centos-binary-cinder-scheduler:latest
+      image: tripleomaster/centos-binary-cinder-scheduler:current-tripleo
       env:
         - name: TZ
           value: UTC

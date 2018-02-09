@@ -50,7 +50,7 @@
       service: cinder-volume-xtremio
     containers:
     - name: cinder-volume
-      image: tripleoupstream/centos-binary-cinder-volume:latest
+      image: tripleomaster/centos-binary-cinder-volume:current-tripletru
       volumeMounts:
         - name: kolla-config
           mountPath: /var/lib/kolla/config_files/
