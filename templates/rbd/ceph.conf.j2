@@ -1,10 +1,9 @@
 [global]
-fsid = {{result.conf_dict['ceph_cluster_fsid']}}
-mon_host = {{result.conf_dict['ceph_mon_host']}}
-auth_cluster_required = {{result.conf_dict['authentication_type']}}
-auth_service_required = {{result.conf_dict['authentication_type']}}
-auth_client_required = {{result.conf_dict['authentication_type']}}
-auth_supported = {{result.conf_dict['authentication_type']}}
+mon_host = {{ceph.ceph_mon_host}}
+auth_cluster_required = {{ceph.authentication_type}}
+auth_service_required = {{ceph.authentication_type}}
+auth_client_required = {{ceph.authentication_type}}
+auth_supported = {{ceph.authentication_type}}
 
 [client]
 rbd_default_features = 1
