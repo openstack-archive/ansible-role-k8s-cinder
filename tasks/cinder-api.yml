@@ -107,4 +107,38 @@
       - name: kolla-config
         config_map:
           name: cinder-api
+  when: cluster == "kubernetes"
 
+- name: Create Cinder-api Deployment
+  openshift_v1_deployment_config:
+    name: cinder-api
+    namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
+    labels:
+      app: cinder-api
+      service: cinder-api
+    replicas: 1
+    spec_template_metadata_labels:
+      app: cinder-api
+      service: cinder-api
+    containers:
+    - name: cinder-api
+      image: tripleomaster/centos-binary-cinder-api:current-tripleo
+      ports:
+        - container_port: 8776
+          protocol: TCP
+      env:
+        - name: TZ
+          value: UTC
+        - name: KOLLA_CONFIG_STRATEGY
+          value: COPY_ALWAYS
+        - name: KOLLA_KUBERNETES
+          value: ""
+      volume_mounts:
+        - name: kolla-config
+          mountPath: /var/lib/kolla/config_files/
+    volumes:
+      - name: kolla-config
+        config_map:
+          name: cinder-api
+  when: cluster == "openshift"

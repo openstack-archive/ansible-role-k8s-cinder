@@ -37,7 +37,7 @@
         {{cinder_conf['content'] | b64decode}}
 
 - name: Create Cinder Volume Deployment
-  k8s_apps_v1beta1_deployment:
+  openshift_v1_deployment_config:
     name: cinder-volume-xtremio
     namespace: "{{ namespace }}"
     service_account_name: "{{ service_account }}"
