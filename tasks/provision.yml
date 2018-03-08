@@ -1,4 +1,4 @@
-
+--
 - include: hiera.yml
 - include: enabled_backends.yml
 
@@ -6,7 +6,6 @@
   config_template:
     src: cinder.conf.j2
     dest: /tmp/cinder.conf
-    config_overrides: '{{cinder_config}}'
     config_type: ini
 
 - name: Read configs into memory
@@ -14,6 +13,7 @@
     src: "/tmp/cinder.conf"
   register: "cinder_conf"
 
+- include: config_maps.yml
 - include: init-jobs.yml
 - include: cinder-api.yml
 - include: cinder-scheduler.yml

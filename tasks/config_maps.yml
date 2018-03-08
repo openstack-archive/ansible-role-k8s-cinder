@@ -1,3 +1,14 @@
+- name: Generate cinder.conf
+  config_template:
+    src: cinder.conf.j2
+    dest: /tmp/cinder.conf
+    config_type: ini
+
+- name: Read cinder.conf into memory
+  slurp:
+    src: "/tmp/cinder.conf"
+  register: "cinder_conf"
+
 # Upload and create pod specific configmap
 - name: Upload config files
   config_template:
@@ -7,7 +18,7 @@
   with_items:
     - cinder-wsgi.conf
 
-- name: Read configs into memory
+- name: Read cinder-wsgi into memory
   slurp:
     src: "/tmp/cinder-wsgi.conf"
   register: "cinder_wsgi_conf"
@@ -59,50 +70,42 @@
       cinder-wsgi.conf: |
         {{cinder_wsgi_conf['content'] | b64decode}}
 
-- name: create cinder-api service
-  k8s_v1_service:
-    name: cinder
-    namespace: "{{ namespace }}"
-    labels:
-      app: cinder-api
-      service: cinder-api
-    selector:
-      app: cinder-api
-      service: cinder-api
-    ports:
-      - name: cinder-api
-        port: 8776
-        target_port: 8776
 
-- name: Create Cinder-api Deployment
-  k8s_apps_v1beta1_deployment:
-    name: cinder-api
+- name: Create cinder-scheduler configmaps
+  ignore_errors: yes
+  k8s_v1_config_map:
+    name: cinder-scheduler
     namespace: "{{ namespace }}"
-    service_account_name: "{{ service_account }}"
+    state: present
+    debug: yes
     labels:
-      app: cinder-api
-      service: cinder-api
-    replicas: 1
-    spec_template_metadata_labels:
-      app: cinder-api
-      service: cinder-api
-    containers:
-    - name: cinder-api
-      image: tripleomaster/centos-binary-cinder-api:current-tripleo
-      ports:
-        - container_port: 8776
-          protocol: TCP
-      env:
-        - name: TZ
-          value: UTC
-        - name: KOLLA_CONFIG_STRATEGY
-          value: COPY_ALWAYS
-        - name: KOLLA_KUBERNETES
-          value: ""
-      volume_mounts:
-        - name: kolla-config
-          mountPath: /var/lib/kolla/config_files/
-    volumes:
-      - name: kolla-config
-        config_map:
-          name: cinder-api
+      service: cinder-scheduler
+    data:
+      config.json: |
+        {
+            "command": "cinder-scheduler --config-file /var/lib/kolla/config_files/cinder.conf",
+            "config_files": [
+                {
+                    "source": "/var/lib/kolla/config_files/cinder.conf",
+                    "dest": "/etc/cinder/cinder.conf",
+                    "owner": "cinder",
+                    "perm": "0600"
+                }
+            ],
+            "permissions": [
+                {
+                    "path": "/var/lib/cinder",
+                    "owner": "cinder:cinder",
+                    "recurse": true
+                },
+                {
+                    "path": "/var/log/kolla/cinder",
+                    "owner": "cinder:cinder",
+                    "recurse": true
+                }
+            ]
+        }
+
+      cinder.conf: |
+        {{cinder_conf['content'] | b64decode}}
+

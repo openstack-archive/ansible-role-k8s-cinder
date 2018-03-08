@@ -19,43 +19,45 @@
 - name: Delete cinder-api deployment
   k8s_apps_v1beta1_deployment:
     name: cinder-api
-    namespace: openstack
+    namespace: {{ namespace }}
     state: absent
 
 - name: Delete cinder-scheduler deployment
   k8s_apps_v1beta1_deployment:
     name: cinder-scheduler
-    namespace: openstack
+    namespace: {{ namespace }}
     state: absent
 
 - name: Delete cinder-volume deployment
   k8s_apps_v1beta1_deployment:
     name: cinder-volume
-    namespace: openstack
+    namespace: {{ namespace }}
     state: absent
 
 - name: Delete cinder service
   k8s_v1_service:
     name: cinder
-    namespace: openstack
+    namespace: {{ namespace }}
     state: absent
 
 - name: Delete cinder configmaps
   ignore_errors: yes
   k8s_v1_config_map:
     name: cinder-volume
-    namespace: openstack
+    namespace: {{ namespace }}
     state: absent
+
 - name: Delete cinder configmaps
   ignore_errors: yes
   k8s_v1_config_map:
     name: cinder-scheduler
-    namespace: openstack
+    namespace: {{ namespace }}
     state: absent
+
 - name: Delete cinder configmaps
   ignore_errors: yes
   k8s_v1_config_map:
     name: cinder-api
-    namespace: openstack
+    namespace: {{ namespace }}
     state: absent
     debug: yes
