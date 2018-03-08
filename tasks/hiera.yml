@@ -1,3 +1,4 @@
+---
 - name: Translate hieradata
   include_role:
     name: 'ansible-role-k8s-tripleo'

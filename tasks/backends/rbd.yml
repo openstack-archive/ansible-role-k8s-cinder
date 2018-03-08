@@ -1,3 +1,4 @@
+---
 - name: Generate config files
   config_template:
     src: rbd/ceph.conf.j2
@@ -9,15 +10,26 @@
     src: "/tmp/ceph.conf"
   register: "ceph_conf"
 
-- name: Create cinder-volume-rbd configmaps
+- name: Generate client keyring file
+  config_template:
+    src: rbd/keyring.j2
+    dest: /tmp/keyring
+    config_type: ini
+
+- name: Read configs into memory
+  slurp:
+    src: "/tmp/keyring"
+  register: "keyring"
+
+- name: Create cinder-volume-ceph configmaps
   ignore_errors: yes
   k8s_v1_config_map:
-    name: cinder-volume-rbd
+    name: cinder-volume-ceph
     namespace: "{{ namespace }}"
     state: present
     debug: yes
     labels:
-      service: cinder-volume-rbd
+      service: cinder-volume-ceph
     data:
       config.json: |
         {
@@ -32,8 +44,14 @@
                 {
                     "source": "/var/lib/kolla/config_files/ceph.conf",
                     "dest": "/etc/ceph/ceph.conf",
-                    "owner": "root",
+                    "owner": "cinder",
                     "perm": "0644"
+                },
+                {
+                    "source": "/var/lib/kolla/config_files/keyring",
+                    "dest": "/etc/ceph/keyring",
+                    "owner": "cinder",
+                    "perm": "0600"
                 }
             ],
             "permissions": [
@@ -56,27 +74,25 @@
       ceph.conf: |
         {{ceph_conf['content'] | b64decode}}
 
+      keyring: |
+        {{keyring['content'] | b64decode}}
 
 - name: Create Cinder Volume Deployment
   k8s_apps_v1beta1_deployment:
-    name: cinder-volume-rbd
+    name: cinder-volume-ceph
     namespace: "{{ namespace }}"
     service_account_name: "{{ service_account }}"
     labels:
-      app: cinder-volume-rbd
-      service: cinder-volume-rbd
+      app: cinder-volume-ceph
+      service: cinder-volume-ceph
     replicas: 1
     spec_template_metadata_labels:
-      app: cinder-volume-rbd
-      service: cinder-volume-rbd
+      app: cinder-volume-ceph
+      service: cinder-volume-ceph
+
     containers:
     - name: cinder-volume
       image: tripleomaster/centos-binary-cinder-volume:current-tripleo
-      volumeMounts:
-        - name: kolla-config
-          mountPath: /var/lib/kolla/config_files/
-        - name: ceph-client-cinder-keyring
-          mountPath: /etc/ceph/ceph.client.cinder.keyring
       env:
         - name: TZ
           value: UTC
@@ -84,12 +100,12 @@
           value: COPY_ALWAYS
         - name: KOLLA_KUBERNETES
           value: ""
+
+      volumeMounts:
+        - name: kolla-config
+          mountPath: /var/lib/kolla/config_files
+
     volumes:
       - name: kolla-config
-        config_map:
-          name: cinder-volume-rbd
-      - name: ceph-client-cinder-keyring
-        secret:
-          secretName: ceph-client-cinder-keyring
-
-
+        configMap:
+          name: cinder-volume-ceph

@@ -1,3 +1,4 @@
+---
 - name: Create cinder-scheduler configmaps
   ignore_errors: yes
   k8s_v1_config_map:
@@ -65,4 +66,3 @@
       - name: kolla-config
         config_map:
           name: cinder-scheduler
-
