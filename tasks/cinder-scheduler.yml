@@ -65,4 +65,35 @@
       - name: kolla-config
         config_map:
           name: cinder-scheduler
+  when: cluster == "kubernetes"
 
+- name: create cinder-scheduler deployment
+  openshift_v1_deployment_config:
+    name: cinder-scheduler
+    namespace: "{{ namespace }}"
+    service_account_name: "{{ service_account }}"
+    labels:
+      app: cinder-scheduler
+      service: cinder-scheduler
+    replicas: 1
+    spec_template_metadata_labels:
+      app: cinder-scheduler
+      service: cinder-scheduler
+    containers:
+    - name: cinder-scheduler
+      image: tripleomaster/centos-binary-cinder-scheduler:current-tripleo
+      env:
+        - name: TZ
+          value: UTC
+        - name: KOLLA_CONFIG_STRATEGY
+          value: COPY_ALWAYS
+        - name: KOLLA_KUBERNETES
+          value: ""
+      volume_mounts:
+        - name: kolla-config
+          mountPath: /var/lib/kolla/config_files/
+    volumes:
+      - name: kolla-config
+        config_map:
+          name: cinder-scheduler
+  when: cluster == "openshift"

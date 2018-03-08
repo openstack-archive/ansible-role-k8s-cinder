@@ -3,10 +3,10 @@ kube_context:
 config_file: 
 action: provision
 namespace: openstack
-service_account: default
+service_account: openstack
 privileged_service_account: openstack-priv
 database_password: weakpassword
-cinder_db_password: cinderpass
+cinder_db_password: cinderpassword
 
 hiera_data: {}
 hiera_data_file: ''
@@ -17,4 +17,53 @@ cinder_config:
   database:
     connection: "mysql+pymysql://root:weakpassword@mariadb:3306/cinder"
 
+mariadb_root: root
+mariadb_root_password: weakpassword
+
+cinder_user: cinder
+cinder_password: cinderpassword
+
+rabbimq_user: guest
+rabbitmq_password: rabbitmqpassword
+
+auth_strategy: noauth
+
+cinder_config:
+  DEFAULT:
+    public_bind_host: "0.0.0.0"
+  database:
+    connection: "mysql+pymysql://root:weakpassword@mariadb:3306/cinder"
+
+cinder_rbd_user_name: cinder
+role_name: cinder
+
+# Backends
+# Array to remember enabled backends. 
 enabled_backends: []
+
+#
+cinder_enable_iscsi_backend: false
+cinder_enable_rbd_backend: false
+cinder_enable_xtremio_backend: false
+cinder_enable_netapp_backend: false
+#
+# Xtremio
+xtremio:
+    max_over_subscription_ratio: 40
+    use_multipath_for_image_xfer: true
+    volume_backend_name: xtremio
+    volume_driver: cinder.volume.drivers.emc.xtremio.XtremIOISCSIDriver
+    san_ip: 
+    xtremio_cluster_name:
+    san_login: 
+    san_password:
+    image_volume_cache_enabled:
+#
+# Ceph
+ceph:
+    cinder_rbd_pool_name: cinder_volumes
+    cinder_rbd_user_name: cinder
+    client_key: 
+    ceph_authentication_type: cephx
+    ceph_mon_host: 
+
