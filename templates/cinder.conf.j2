@@ -1,50 +1,42 @@
 [DEFAULT]
-glance_api_servers={{result.conf_dict['DEFAULT']['glance_api_servers']}}
-glance_api_version={{result.conf_dict['DEFAULT']['glance_api_version']}}
-enable_v3_api=True
-storage_availability_zone=nova
-default_availability_zone=nova
-auth_strategy={{result.conf_dict['DEFAULT']['auth_strategy']}}
-enabled_backends={{ enabled_backends | join(",") }}
-nova_catalog_info=compute:nova:internalURL
-nova_catalog_admin_info=compute:nova:adminURL
-scheduler_driver=cinder.scheduler.filter_scheduler.FilterScheduler
-osapi_volume_listen=0.0.0.0
-osapi_volume_workers=2
-log_dir=/var/log/cinder
-transport_url=rabbit://{{result.conf_dict['oslo_messaging_rabbit']['rabbit_userid']}}:{{result.conf_dict['oslo_messaging_rabbit']['rabbit_password']}}@rabbitmq:{{result.conf_dict['oslo_messaging_rabbit']['rabbit_port']}}/?ssl=0
-rpc_backend=rabbit
-control_exchange=openstack
-api_paste_config=/etc/cinder/api-paste.ini
-
-[database]
-connection=mysql+pymysql://{{result.conf_dict['database']['user']}}:{{result.conf_dict['database']['password']}}@{{result.conf_dict['database']['host']}}:3306/{{result.conf_dict['database']['dbname']}}
-max_retries=-1
-db_max_retries=-1
-
-[oslo_concurrency]
-lock_path=/var/lib/cinder/tmp
+enable_v3_api = true
+glance_api_servers = none
+enabled_backends = {{ enabled_backends | join(",") }}
+glance_api_version = 2
+log_dir = /var/log/cinder
+osapi_volume_listen = 0.0.0.0
+scheduler_driver = cinder.scheduler.filter_scheduler.FilterScheduler
+nova_catalog_info = compute:nova:internalURL
+api_paste_config = /etc/cinder/api-paste.ini
+transport_url = rabbit://{{ rabbitmq_user }}:{{rabbitmq_password }}@rabbitmq:5672/?ssl=0
+public_bind_host = 0.0.0.0
+auth_strategy = {{ auth_strategy }}
 
 [oslo_messaging_notifications]
-driver=messagingv2
-transport_url=rabbit://{{result.conf_dict['oslo_messaging_rabbit']['rabbit_userid']}}:{{result.conf_dict['oslo_messaging_rabbit']['rabbit_password']}}@rabbitmq:{{result.conf_dict['oslo_messaging_rabbit']['rabbit_port']}}/?ssl=0
+transport_url = rabbit://{{ rabbitmq_user }}:{{ rabbitmq_password }}@rabbitmq:5672/?ssl=0
+driver = messagingv2
 
-[oslo_messaging_rabbit]
-ssl={{result.conf_dict['oslo_messaging_rabbit']['rabbit_use_ssl']}}
-rabbit_port={{result.conf_dict['oslo_messaging_rabbit']['rabbit_port']}}
-rabbit_userid={{result.conf_dict['oslo_messaging_rabbit']['rabbit_userid']}}
-rabbit_password={{result.conf_dict['oslo_messaging_rabbit']['rabbit_password']}}
-heartbeat_timeout_threshold={{result.conf_dict['oslo_messaging_rabbit']['rabbit_heartbeat_timeout_threshold']}}
+[database]
+db_max_retries = -1
+host = mariadb
+max_retries = -1
+connection = mysql+pymysql://{{ mariadb_root_user }}:{{ mariadb_root_password }}@mariadb:3306/{{ cinder_user }}
+user = {{ cinder_user }}
+password = {{ cinder_password }}
+dbname = {{ cinder_user }}
 
-[oslo_middleware]
-enable_proxy_headers_parsing=True
+[oslo_concurrency]
+lock_path = /var/lib/cinder/tmp
 
 [oslo_policy]
-policy_file=/etc/cinder/policy.json
+policy_file = /etc/cinder/policy.json
 
-{% if result.conf_dict['cinder_enable_iscsi_backend'] %}
-[tripleo_iscsi]
-volume_backend_name=tripleo_iscsi
+[privsep_entrypoint]
+helper_command = sudo cinder-rootwrap /etc/cinder/rootwrap.conf privsep-helper --config-file /etc/cinder/cinder.conf
+
+{% if cinder_enable_iscsi_backend %}
+[iscsi]
+volume_backend_name=iscsi
 volume_driver=cinder.volume.drivers.lvm.LVMVolumeDriver
 iscsi_ip_address=iscsid
 iscsi_helper=lioadm
@@ -52,35 +44,18 @@ volumes_dir=/var/lib/cinder/cinder-volumes
 iscsi_protocol=iscsi
 {% endif %}
 
-{% if result.conf_dict['dellemc_xtremio_iscsi_backend'] %}
-[xtremio]
-max_over_subscription_ratio = {{result.conf_dict['xtremio']['max_over_subscription_ratio']}}
-use_multipath_for_image_xfer= {{result.conf_dict['xtremio']['use_multipath_for_image_xfer']}}
-volume_backend_name=xtremio
-volume_driver=cinder.volume.drivers.emc.xtremio.XtremIOISCSIDriver
-san_ip={{result.conf_dict['xtremio']['san_ip']}}
-xtremio_cluster_name={{result.conf_dict['xtremio']['xtremio_cluster_name']}}
-san_login={{result.conf_dict['xtremio']['san_login']}}
-san_password={{result.conf_dict['xtremio']['san_password']}}
-image_volume_cache_enabled={{result.conf_dict['xtremio']['image_volume_cache_enabled']}}
+{% if cinder_enable_xtremio_backend %}
+{% include 'xtremio/cinder-annex.conf.j2' %}
 {% endif %}
 
-{% if result.conf_dict['cinder_enable_rbd_backend'] %}
-[tripleo_ceph]
-volume_backend_name=tripleo_ceph
-volume_driver=cinder.volume.drivers.rbd.RBDDriver
-rbd_ceph_conf=/etc/ceph/ceph.conf
-rbd_user={{ result.conf_dict['cinder_rbd_user_name'] }}
-rbd_pool={{ result.conf_dict['cinder_rbd_pool_name'] }}
-rbd_secret_uuid={{ result.conf_dict['ceph_cluster_fsid'] }}
-backend_host=hostgroup
+{% if cinder_enable_rbd_backend %}
+{% include 'rbd/cinder-annex.conf.j2' %}
 {% endif %}
 
-{% if result.conf_dict['cinder_enable_netapp_backend'] %}
-[tripleo_netapp]
+{% if cinder_enable_netapp_backend %}
+[netapp]
 title = tripleo_netapp
-netapp_login = {{result.conf_dict['tripleo_netapp']['netapp_login']}}
-netapp_password = {{result.conf_dict['tripleo_netapp']['netapp_password']}}
-netapp_server_hostname = {{result.conf_dict['tripleo_netapp']['netapp_server_hostname']}}
+netapp_login = {{netapp.netapp_login}}
+netapp_password = {{netapp.netapp_password}}
+netapp_server_hostname = {{netapp.netapp_server_hostname}}
 {% endif %}
-

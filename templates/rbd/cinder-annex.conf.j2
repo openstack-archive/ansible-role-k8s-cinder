@@ -1,0 +1,6 @@
+[tripleo_ceph]
+volume_backend_name=tripleo_ceph
+volume_driver=cinder.volume.drivers.rbd.RBDDriver
+rbd_ceph_conf=/etc/ceph/ceph.conf
+rbd_user={{ ceph.cinder_rbd_user_name }}
+rbd_pool={{ ceph.cinder_rbd_pool_name }}

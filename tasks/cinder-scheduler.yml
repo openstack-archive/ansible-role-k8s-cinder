@@ -65,4 +65,3 @@
       - name: kolla-config
         config_map:
           name: cinder-scheduler
-
